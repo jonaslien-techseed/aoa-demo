@@ -1,0 +1,29 @@
+version: "3"
+services:
+  aoa-react-app:
+    image: aoa-react-app
+    stdin_open: true
+    ports:
+      - "3000:3000"
+    networks:
+      - demo-app
+
+  socketio-server:
+    image: socketio-server
+    ports:
+      - "3001:3001"
+    networks:
+      - demo-app
+
+  aoa-py-cli:
+    image: aoa-py-cli
+    ports:
+      - "3002:3002"
+    networks:
+      - demo-app
+    depends_on:
+      - socketio-server
+
+networks:
+  demo-app:
+    driver: bridge
