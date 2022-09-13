@@ -61,7 +61,7 @@ def loop_emit():
             pos_json = json.dumps(pos)
             sio.emit('locator-to-server', pos_json)
             #rand_pos()
-            time.sleep(0.1)
+            time.sleep(1)
             i += 1
 
         #sio.wait()
