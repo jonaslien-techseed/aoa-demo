@@ -2,21 +2,29 @@ import * as React from 'react';
 import * as THREE from "three";
 import {useEffect, useState} from 'react';
 import { useFrame } from 'react-three-fiber';
+import io from 'socket.io-client';
 
+const socket = io.connect("http://localhost:3001");
 
-// Example
-// const geometry = new CustomArrowBufferGeometry(dir, origin, length, optionalParams)
-// const material = new THREE.MeshPhysicalMaterial({ color: new THREE.Color("rgb(44,187,206)") });
-// const arrow = new THREE.Mesh(geometry, material);
 
 const CustomArrowBufferGeometry = ({}) => {
     const customArrow = React.useRef();
-    const [direction, setDirection] = useState({ x: 1, y: 1, z: 1});
-    const dest = new THREE.Vector3(-1, 3, 1);
+    const [direction, setDirection] = useState({ x: -1, y: 3, z: 1});
+    const { x, y, z} = direction;
+    let dest = new THREE.Vector3(x, y, z);
+
+    useEffect(() => {
+        socket.on("server-to-ui", (data) => {
+            const dir = JSON.parse(data);
+            setDirection({...direction, 
+                z: dir.position.z});
+        });
+    }, [socket])
 
     useFrame(() => {
-        customArrow.current.lookAt(dest);
-        //customArrow.current.rotation.y += 0.01;
+        if (customArrow.current) {
+            customArrow.current.lookAt(dest);
+        }
     });
 
     return (
@@ -27,7 +35,6 @@ const CustomArrowBufferGeometry = ({}) => {
                 rotation={[Math.PI * 0.5, Math.PI * 0, Math.PI * 0]} >
             <cylinderBufferGeometry attach="geometry" args={[0.1, 0.1, 2, 32]} />
             <meshStandardMaterial attach="material" color="#fff" />
-            <axesHelper />
             </mesh>
             <mesh 
                 position={[0,0,2]}
@@ -43,7 +50,10 @@ const CustomArrowBufferGeometry = ({}) => {
 export default CustomArrowBufferGeometry;
 /*
 
-
+dest.set( 
+                dir.position.x,
+                dir.position.y,
+                dir.position.z);
 
 class CustomArrowBufferGeometry extends THREE.BufferGeometry {
     constructor(direction, origin, length, params = {}) {

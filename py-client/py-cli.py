@@ -26,6 +26,11 @@ def rand_pos():
         pos["position"]["z"] -= 0.1 
     else:
         pos["position"]["z"] += 0.1
+    r = random.uniform(-1, 1)
+    if (r < 0):
+        pos["position"]["x"] -= 0.1 
+    else:
+        pos["position"]["x"] += 0.1
     print(pos)
 
 

@@ -8,7 +8,7 @@ const socket = io.connect("http://localhost:3001");
 
 const Arrow = ({}) => {
     const arrow = React.useRef();
-    const [position, setPosition] = useState({ x: 0, y: 0, z: 0 });
+    const [position, setPosition] = useState({ x: -1, y: 3, z: 1 });
     const { x, y, z } = position;
     const vec = new THREE.Vector3(x, y, z);
     const dest = new THREE.Vector3(3, 3, 5);
@@ -22,14 +22,13 @@ const Arrow = ({}) => {
         socket.on("server-to-ui", (data) => {
         const obj = JSON.parse(data);
         setPosition({...position, z: obj.position.z});
-        console.log(obj);
         });
     }, [socket]);
 
     
 
     useFrame(() => {
-        //arrow.current.position.lerp(vec, 0.2);
+        arrow.current.position.lerp(vec, 0.2);
         // if(arrow.current) {
         //arrow.current.rotation.x += 0.01;
         //arrow.current.rotation.y += 0.01;
@@ -42,18 +41,16 @@ const Arrow = ({}) => {
 
     return (
             <mesh 
-                ref={arrow} 
-                position={[-1, 3, 1]} >
+                ref={arrow} >
                 <cylinderBufferGeometry attach="geometry" args={[0.2, 0.2, 0.1, 32]} />
                 <meshStandardMaterial attach="material" color="#fff" />
-                <arrowHelper args={[dest, vec, arrowLength, 0xffff00, 0.1*arrowLength, 0.1*arrowLength]}/>
                 <axesHelper />
             </mesh>
     );
 };
 
 
-
+//<arrowHelper args={[dest, vec, arrowLength, 0xffff00, 0.1*arrowLength, 0.1*arrowLength]}/>
 //rotation={[Math.PI * 0.5, Math.PI * 0, Math.PI * 0]} >
 //rotation={[Math.atan(y1 / Math.sqrt((x1*x1)+(z1*z1))), Math.atan(-x1 / z1), 0]} >
 //args={[dest, vec, arrowLength, 0xffff00, 0.1*arrowLength, 0.1*arrowLength]}
